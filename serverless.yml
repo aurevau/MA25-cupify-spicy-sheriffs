@@ -1,13 +1,14 @@
 # "org" ensures this Service is used with the correct Serverless Framework Access Key.
 useDotenv: true
 
-org: aurelievaudan
+org: ${env:AWS_ORG}
 service: MA25-cupify-spicy-sheriffs
 
 provider:
   name: aws
   runtime: nodejs24.x
   architecture: arm64
+  region: eu-north-1
   iam:
     role: ${env:AWS_ROLE}
 
