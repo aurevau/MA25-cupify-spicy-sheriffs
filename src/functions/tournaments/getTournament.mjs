@@ -9,5 +9,5 @@ export const handler = middy(async (event) => {
     const tournament = await getTournament(id);
 
     if (!tournament) throw createError(404, `Tournament ${id} not found`);
-    return sendResponse(200, { tournament });
+    return sendResponse(200, tournament);
 }).use(httpErrorHandler());
