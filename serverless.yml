@@ -23,11 +23,15 @@ resources:
         TableName: tournaments
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
+          - AttributeName: entity
+            AttributeType: S
           - AttributeName: id
             AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: entity
             KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE
     TeamsTable:
       Type: AWS::DynamoDB::Table
       Properties:
