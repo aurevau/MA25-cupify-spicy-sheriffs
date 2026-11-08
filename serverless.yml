@@ -62,3 +62,11 @@ resources:
             KeyType: HASH
           - AttributeName: id
             KeyType: RANGE
+
+functions:
+  getTournaments:
+    handler: src/functions/tournaments/getTournaments.handler
+    events: 
+      - httpApi:
+          path: /tournaments
+          method: GET
