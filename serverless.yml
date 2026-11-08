@@ -11,12 +11,3 @@ provider:
   region: eu-north-1
   iam:
     role: ${env:AWS_ROLE}
-
-
-functions:
-  hello:
-    handler: handler.hello
-    events:
-      - httpApi:
-          path: /
-          method: get
