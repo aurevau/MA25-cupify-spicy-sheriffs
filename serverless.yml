@@ -70,3 +70,10 @@ functions:
       - httpApi:
           path: /tournaments
           method: GET
+
+  getTournament:
+    handler: src/functions/tournaments/getTournament.handler
+    events: 
+      - httpApi:
+          path: /tournaments/{id}
+          method: GET
