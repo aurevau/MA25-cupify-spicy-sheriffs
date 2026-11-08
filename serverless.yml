@@ -1,15 +1,16 @@
 # "org" ensures this Service is used with the correct Serverless Framework Access Key.
+useDotenv: true
+
 org: aurelievaudan
-# "service" is the name of this project. This will also be added to your AWS resource names.
 service: MA25-cupify-spicy-sheriffs
 
 provider:
   name: aws
   runtime: nodejs24.x
   architecture: arm64
-  # Uncomment to easily set up a custom domain. Read the docs for more details:
-  # https://www.serverless.com/framework/docs/providers/aws/guide/domains
-  # domain: api.example.com
+  iam:
+    role: ${env:AWS_ROLE}
+
 
 functions:
   hello:
