@@ -40,6 +40,7 @@ export const getMatchById = async (tournamentId, matchId) => {
   }
 };
 
+// Radera en match
 export const deleteMatchById = async (tournamentId, matchId) => {
   const command = new DeleteCommand({
     TableName: TABLE_NAME,
