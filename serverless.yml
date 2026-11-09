@@ -1,20 +1,64 @@
-# "org" ensures this Service is used with the correct Serverless Framework Access Key.
-org: aurelievaudan
-# "service" is the name of this project. This will also be added to your AWS resource names.
+useDotenv: true
+
+org: ${env:AWS_ORG}
 service: MA25-cupify-spicy-sheriffs
 
 provider:
   name: aws
   runtime: nodejs24.x
   architecture: arm64
-  # Uncomment to easily set up a custom domain. Read the docs for more details:
-  # https://www.serverless.com/framework/docs/providers/aws/guide/domains
-  # domain: api.example.com
+  region: eu-north-1
+  iam:
+    role: ${env:AWS_ROLE}
+  environment:
+    TOURNAMENTS_TABLE: tournaments
+    TEAMS_TABLE: teams
+    MATCHES_TABLE: matches
 
-functions:
-  hello:
-    handler: handler.hello
-    events:
-      - httpApi:
-          path: /
-          method: get
+resources:
+  Resources:
+    TournamentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: tournaments
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: entity
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: entity
+            KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE
+    TeamsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: teams
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: tournamentId
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tournamentId
+            KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE
+    MatchesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: matches
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: tournamentId
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tournamentId
+            KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE
