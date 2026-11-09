@@ -84,3 +84,10 @@ functions:
       - httpApi:
           path: /tournaments
           method: POST
+
+  updateTournamentStatus:
+    handler: src/functions/tournaments/updateTournamentStatus.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/status
+          method: PATCH
