@@ -1,4 +1,4 @@
-import { QueryCommand, GetCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { QueryCommand, GetCommand, PutCommand, UpdateCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb';
 import { randomUUID } from 'node:crypto';
 import { createError } from '@middy/util';
 import { db } from './db.mjs';
@@ -94,5 +94,44 @@ export const updateTournamentStatus = async (id, status) => {
         }
         console.error('ERROR:', error);
         throw createError(500, 'Could not update tournament status');
+    }
+}
+
+export const hasTeamsOrMatches = async (tournamentId) => {
+    const query = (tableName) => new QueryCommand({
+        TableName: tableName,
+        KeyConditionExpression: 'tournamentId = :tournamentId',
+        ExpressionAttributeValues: {
+            ':tournamentId': tournamentId
+        },
+        Limit: 1
+    });
+
+    try {
+        const [teams, matches] = await Promise.all([
+            db.send(query('teams')),
+            db.send(query('matches'))
+        ]);
+        return teams.Items.length > 0 || matches.Items.length > 0;
+    } catch (error) {
+        console.error('ERROR:', error);
+        throw createError(500, 'Could not check teams and matches');
+    }
+}
+
+export const deleteTournament = async (id) => {
+    const command = new DeleteCommand({
+        TableName: 'tournaments',
+        Key: {
+            entity: 'tournament',
+            id: id
+        }
+    });
+
+    try {
+        await db.send(command);
+    } catch (error) {
+        console.error('ERROR:', error);
+        throw createError(500, 'Could not delete tournament');
     }
 }
