@@ -1,4 +1,3 @@
-import { createError } from "@middy/util";
 import { sendResponse } from "../../lib/response.mjs";
 import { getTournament } from "../../lib/tournaments.mjs"
 import middy from '@middy/core';
