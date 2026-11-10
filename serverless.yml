@@ -105,3 +105,10 @@ functions:
       - httpApi:
           path: /tournaments/{id}/matches
           method: GET
+
+  createTeam:
+    handler: src/functions/teams/createTeam.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams
+          method: POST
