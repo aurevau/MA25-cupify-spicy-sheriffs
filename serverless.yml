@@ -66,14 +66,21 @@ resources:
 functions:
   getTournaments:
     handler: src/functions/tournaments/getTournaments.handler
-    events: 
+    events:
       - httpApi:
           path: /tournaments
           method: GET
 
   getTournament:
     handler: src/functions/tournaments/getTournament.handler
-    events: 
+    events:
       - httpApi:
           path: /tournaments/{id}
           method: GET
+
+  createTournament:
+    handler: src/functions/tournaments/createTournament.handler
+    events:
+      - httpApi:
+          path: /tournaments
+          method: POST

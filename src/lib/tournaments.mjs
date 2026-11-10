@@ -1,4 +1,5 @@
-import { QueryCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
+import { QueryCommand, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { randomUUID } from 'node:crypto';
 import { createError } from '@middy/util';
 import { db } from './db.mjs';
 
@@ -35,5 +36,32 @@ export const getTournament = async (id) => {
     } catch (error) {
         console.error('ERROR:', error);
         throw createError(500, 'Could not fetch tournament');
+    }
+}
+
+export const createTournament = async ({ name, sport, location, startDate }) => {
+    const tournament = {
+        id: randomUUID(),
+        name,
+        sport,
+        location,
+        startDate,
+        status: 'upcoming'
+    };
+
+    const command = new PutCommand({
+        TableName: 'tournaments',
+        Item: {
+            entity: 'tournament',
+            ...tournament
+        }
+    });
+
+    try {
+        await db.send(command);
+        return tournament;
+    } catch (error) {
+        console.error('ERROR:', error);
+        throw createError(500, 'Could not create tournament');
     }
 }
