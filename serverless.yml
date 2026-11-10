@@ -105,9 +105,17 @@ functions:
       - httpApi:
           path: /tournaments/{id}/matches
           method: GET
+
   getMatch:
     handler: src/functions/matches/getMatch.handler
     events:
       - httpApi:
           path: /tournaments/{id}/matches/{matchId}
           method: GET
+
+  deleteMatch:
+    handler: src/functions/matches/deleteMatch.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches/{matchId}
+          method: DELETE
