@@ -1,4 +1,4 @@
-import { QueryCommand, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { QueryCommand, GetCommand, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { randomUUID } from 'node:crypto';
 import { createError } from '@middy/util';
 import { db } from './db.mjs';
@@ -63,5 +63,36 @@ export const createTournament = async ({ name, sport, location, startDate }) => 
     } catch (error) {
         console.error('ERROR:', error);
         throw createError(500, 'Could not create tournament');
+    }
+}
+
+export const updateTournamentStatus = async (id, status) => {
+    const command = new UpdateCommand({
+        TableName: 'tournaments',
+        Key: {
+            entity: 'tournament',
+            id: id
+        },
+        UpdateExpression: 'SET #status = :status',
+        ConditionExpression: 'attribute_exists(id)',
+        ExpressionAttributeNames: {
+            '#status': 'status'
+        },
+        ExpressionAttributeValues: {
+            ':status': status
+        },
+        ReturnValues: 'ALL_NEW'
+    });
+
+    try {
+        const { Attributes } = await db.send(command);
+        const { entity, ...tournament } = Attributes;
+        return tournament;
+    } catch (error) {
+        if (error.name === 'ConditionalCheckFailedException') {
+            return undefined;
+        }
+        console.error('ERROR:', error);
+        throw createError(500, 'Could not update tournament status');
     }
 }
