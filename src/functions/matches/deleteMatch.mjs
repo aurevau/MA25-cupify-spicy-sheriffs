@@ -1,5 +1,4 @@
 import middy from "@middy/core";
-import { sendResponse } from "../../lib/response.mjs";
 import { errorHandler, httpError } from "../../lib/errors.mjs";
 import { getMatchById, deleteMatchById } from "../../lib/matches.mjs";
 
@@ -14,9 +13,5 @@ export const handler = middy(async (event) => {
 
   await deleteMatchById(tournamentId, matchId);
 
-  return sendResponse(200, {
-    message: "Match deleted successfully",
-    id: matchId,
-    tournamentId: tournamentId,
-  });
+  return { statusCode: 204 };
 }).use(errorHandler());
