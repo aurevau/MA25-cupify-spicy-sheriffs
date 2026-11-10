@@ -98,3 +98,10 @@ functions:
       - httpApi:
           path: /tournaments/{id}
           method: DELETE
+
+  getMatches:
+    handler: src/functions/matches/getMatches.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches
+          method: GET
