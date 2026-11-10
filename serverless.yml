@@ -91,3 +91,10 @@ functions:
       - httpApi:
           path: /tournaments/{id}/status
           method: PATCH
+
+  deleteTournament:
+    handler: src/functions/tournaments/deleteTournament.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}
+          method: DELETE
