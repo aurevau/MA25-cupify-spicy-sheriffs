@@ -78,6 +78,27 @@ functions:
           path: /tournaments/{id}
           method: GET
 
+  createTournament:
+    handler: src/functions/tournaments/createTournament.handler
+    events:
+      - httpApi:
+          path: /tournaments
+          method: POST
+
+  updateTournamentStatus:
+    handler: src/functions/tournaments/updateTournamentStatus.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/status
+          method: PATCH
+
+  deleteTournament:
+    handler: src/functions/tournaments/deleteTournament.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}
+          method: DELETE
+
   getMatches:
     handler: src/functions/matches/getMatches.handler
     events:
