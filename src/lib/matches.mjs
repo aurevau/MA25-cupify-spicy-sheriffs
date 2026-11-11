@@ -1,6 +1,7 @@
-import { QueryCommand, GetCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
+import { QueryCommand, GetCommand, DeleteCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { createError } from "@middy/util";
 import { db } from "./db.mjs";
+import { randomUUID } from "node:crypto";
 
 const TABLE_NAME = process.env.MATCHES_TABLE || "matches";
 
@@ -55,5 +56,43 @@ export const deleteMatchById = async (tournamentId, matchId) => {
   } catch (error) {
     console.error("ERROR:", error);
     throw createError(500, "Could not delete match");
+  }
+};
+
+export const crateMatch = async (tournamentId, { homeTeamId, awayTeamId, date }) => {
+  let teams;
+  try {
+    teams = await Promise.all(
+      [homeTeamId, awayTeamId].map((id) =>
+        db.send(new GetCommand({
+          TableName: process.env.TEAMS_TABLE || "teams",
+          Key: { tournamentId, id },
+        }))
+      )
+    );
+  } catch (error) {
+    console.error("ERROR:", error);
+    throw createError(500, "Could not verify teams");
+  }
+
+  const match = {
+    id: randomUUID(),
+    tournamentId,
+    homeTeamId,
+    awayTeamId,
+    date,
+    status: "scheduled",
+    homeScore: null,
+    awayScore: null,
+  };
+  try {
+    await db.send(new PutCommand({
+      TableName: TABLE_NAME,
+      Item: match,
+    }));
+    return match;
+  } catch (error) {
+    console.error("ERROR", error);
+    throw createError(500, "Could not create match");
   }
 };
