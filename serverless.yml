@@ -126,3 +126,10 @@ functions:
       - httpApi:
           path: /tournaments/{id}/matches/{matchId}
           method: DELETE
+
+  getTeam:
+    handler: src/functions/teams/getTeam.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams/{teamId}
+          method: GET
