@@ -12,8 +12,8 @@ export const handler = middy(async (event) => {
     const body = parseBody(event);
     requireStrings(body, ['name', 'city', 'coach']);
 
-    const tournamentId = await getTournament(id);
-    if (!tournamentId) throw httpError(404, `tournament ${id} not found`);
+    const tournament = await getTournament(id);
+    if (!tournament) throw httpError(404, `tournament ${id} not found`);
 
     const team = await createTeam(id, body);
     return sendResponse(201, team);
