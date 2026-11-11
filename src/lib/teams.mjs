@@ -46,16 +46,16 @@ export const getTeam = async (tournamentId, teamId) => {
     }
 };
 // Reads all teams in one tournament. Returns [] if there are none.
-export const getTeamsByTournament  = async (tournamentId) => {
+export const getTeamsByTournament = async (tournamentId) => {
     const command = new QueryCommand({
         TableName: 'teams',
-        keyConditionExpression: 'tournamentId = :tournamentId',
+        KeyConditionExpression: 'tournamentId = :tournamentId',
         ExpressionAttributeValues: {
             ':tournamentId': tournamentId
         }
     });
     try {
-        const {Items} = await db.send(command);
+        const { Items } = await db.send(command);
         return Items ?? [];
     } catch (error) {
         console.error('ERROR:', error);
@@ -82,7 +82,11 @@ export const updateTeam = async (tournamentId, teamId, { name, city, coach }) =>
         await db.send(command);
         return team;
     } catch (error) {
+        if (error.name === 'ConditionalCheckFailedException') {
+            return undefined;
+        }
         console.error('ERROR:', error);
         throw createError(500, 'Could not update team');
     }
-}
+};
+
