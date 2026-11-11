@@ -119,3 +119,10 @@ functions:
       - httpApi:
           path: /tournaments/{id}/matches/{matchId}
           method: DELETE
+
+  createMatch:
+    handler: src/functions/matches/createMatch.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches
+          method: POST

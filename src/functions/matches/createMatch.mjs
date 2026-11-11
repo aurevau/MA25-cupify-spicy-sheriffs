@@ -4,10 +4,11 @@ import { errorHandler, httpError } from "../../lib/errors.mjs";
 import { parseBody, requireStrings, requireDate} from "../../lib/validate.mjs"
 
 export const handler = middy(async (event) => {
+    const tournamentId = event.pathParameters?.id;
     const body = parseBody(event);
-    requireStrings(body, ["hometeamid", "awayteamid"]);
+    requireStrings(body, ["homeTeamId", "awayTeamId"]);
     requireDate(body.date, "date");
 
-    const match = await crateMatch(tournamentid, body);
+    const match = await crateMatch(tournamentId, body);
     return sendResponse(201, match);
-}).use(errorHandler)
+}).use(errorHandler())
