@@ -7,8 +7,7 @@ export const handler = middy(async (event) => {
     const { id, teamId } = event.pathParameters;
 
     const team = await getTeam(id, teamId);
-    if (!team) throw httpError(404, `team ${teamId} not found`);
+        if (!team) throw httpError(404, `team ${teamId} not found`);
 
-    ß
     return sendResponse(200, team);
 }).use(errorHandler());
