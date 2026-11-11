@@ -1,4 +1,5 @@
 import { httpError } from "./errors.mjs";
+import { isValidIsoDate } from "./dates.mjs";
 
 // Unvalid JSON or body that is not a JSON object gives 400
 export const parseBody = (event) => {
@@ -24,10 +25,10 @@ export const requireStrings = (body, fields) => {
     }
 };
 
-// Valid date check
+// Valid ISO 8601 date check 
 export const requireDate = (value, field) => {
-    if (typeof value !== 'string' || Number.isNaN(Date.parse(value))) {
-        throw httpError(400, `${field} must be a valid date`);
+    if (!isValidIsoDate(value)) {
+        throw httpError(400, `${field} must be a valid ISO 8601 date`);
     }
 };
 
