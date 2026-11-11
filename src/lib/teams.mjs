@@ -3,6 +3,8 @@ import { randomUUID } from 'node:crypto';
 import { createError } from '@middy/util';
 import { db } from './db.mjs';
 
+
+// Saves a new team. The backend creates the id, and tournamentId comes from the URL.
 export const createTeam = async (tournamentId, { name, city, coach }) => {
     const team = {
         id: randomUUID(),
@@ -26,6 +28,7 @@ export const createTeam = async (tournamentId, { name, city, coach }) => {
     }
 };
 
+// Reads one team. Returns undefined if it doesn't exist, which the handler turns into a 404.
 export const getTeam = async (tournamentId, teamId) => {
     const command = new GetCommand({
         TableName: 'teams',
@@ -42,7 +45,7 @@ export const getTeam = async (tournamentId, teamId) => {
         throw createError(500, 'Could not fetch team');
     }
 };
-
+// Reads all teams in one tournament. Returns [] if there are none.
 export const getTeamsByTournament  = async (tournamentId) => {
     const command = new QueryCommand({
         TableName: 'teams',
@@ -59,3 +62,27 @@ export const getTeamsByTournament  = async (tournamentId) => {
         throw createError(500, 'Could not fetch teams');
     }
 };
+
+// Replaces a team's info. Returns undefined if the team doesn't exist, which the handler turns into a 404.
+export const updateTeam = async (tournamentId, teamId, { name, city, coach }) => {
+    const team = {
+        id: teamId,
+        tournamentId,
+        name,
+        city,
+        coach
+    };
+
+    const command = new PutCommand({
+        TableName: 'teams',
+        Item: team,
+        ConditionExpression: 'attribute_exists(id)' // Only update if the team exists
+    });
+    try {
+        await db.send(command);
+        return team;
+    } catch (error) {
+        console.error('ERROR:', error);
+        throw createError(500, 'Could not update team');
+    }
+}
