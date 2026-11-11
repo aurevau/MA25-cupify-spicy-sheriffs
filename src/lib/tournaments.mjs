@@ -9,15 +9,16 @@ export const getTournaments = async () => {
         TableName: 'tournaments',
         KeyConditionExpression: 'entity = :entity',
         ExpressionAttributeValues: {
-            ':entity' : 'tournament'
-        }});
+            ':entity': 'tournament'
+        }
+    });
     try {
         const { Items } = await db.send(command);
-        return Items ?? [];
+        return (Items ?? []).map(({ entity, ...tournament }) => tournament);
     } catch (error) {
         console.error('ERROR:', error);
         throw createError(500, 'Could not fetch tournaments');
-        
+
     }
 }
 
@@ -32,7 +33,9 @@ export const getTournament = async (id) => {
 
     try {
         const { Item } = await db.send(command);
-        return Item;
+        if (!Item) return undefined;
+        const { entity, ...tournament } = Item;
+        return tournament;
     } catch (error) {
         console.error('ERROR:', error);
         throw createError(500, 'Could not fetch tournament');
