@@ -45,5 +45,7 @@ export const calculateStandings = (teams, matches) => {
         addResult(away, match.awayScore, match.homeScore);
     }
 
-    return [...table.values()];
+    return [...table.values()].sort((a, b) =>
+        b.points - a.points || b.goalDifference - a.goalDifference
+    );
 };
