@@ -155,3 +155,11 @@ functions:
       - httpApi:
           path: /tournaments/{id}/teams
           method: GET
+
+
+  updateTeam:
+    handler: src/functions/teams/updateTeam.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams/{teamId}
+          method: PUT
