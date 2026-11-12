@@ -106,6 +106,13 @@ functions:
           path: /tournaments/{id}/matches
           method: GET
 
+  createTeam:
+    handler: src/functions/teams/createTeam.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams
+          method: POST
+
   getMatch:
     handler: src/functions/matches/getMatch.handler
     events:
@@ -126,3 +133,10 @@ functions:
       - httpApi:
           path: /tournaments/{id}/matches
           method: POST
+          
+  getTeam:
+    handler: src/functions/teams/getTeam.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams/{teamId}
+          method: GET
