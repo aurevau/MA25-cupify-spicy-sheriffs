@@ -22,6 +22,14 @@ import { getTeam } from "../../lib/teams.mjs";
             throw httpError(404, "Tournament not found");
         }
 
+        const teams = await Promise.all([
+            getTeam(tournamentId, body.homeTeamId),
+            getTeam(tournamentId, body.awayTeamId),
+        ]);
+        if (teams.some((team) => !team)) {
+            throw httpError(404, "Team not found in tournament");
+        }
+
 
         const match = await updateMatch(tournamentId, matchId, body);
         return sendResponse(200, match);
