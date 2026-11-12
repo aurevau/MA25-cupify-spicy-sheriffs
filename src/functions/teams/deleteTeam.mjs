@@ -1,13 +1,13 @@
 import middy from "@middy/core";
 import { errorHandler, httpError } from "../../lib/errors.mjs";
-import { getTeamById, deleteTeamById } from "../../lib/teams.mjs";
+import { getTeam, deleteTeam } from "../../lib/teams.mjs";
 import { getMatchesByTournamentId } from "../../lib/matches.mjs";
 
 export const handler = middy(async (event) => {
   const tournamentId = event.pathParameters?.id;
   const teamId = event.pathParameters?.teamId;
 
-  const existingTeam = await getTeamById(tournamentId, teamId);
+  const existingTeam = await getTeam(tournamentId, teamId);
   if (!existingTeam) {
     throw httpError(404, "Team not found");
   }
@@ -21,7 +21,7 @@ export const handler = middy(async (event) => {
     throw httpError(409, "Cannot delete team associated with existing matches");
   }
 
-  await deleteTeamById(tournamentId, teamId);
+  await deleteTeam(tournamentId, teamId);
 
   return { statusCode: 204 };
 }).use(errorHandler());
