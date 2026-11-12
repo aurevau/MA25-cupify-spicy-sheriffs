@@ -64,8 +64,8 @@ export const updateMatch = async (tournamentId, matchId, { homeTeamId, awayTeamI
   const command = new UpdateCommand({
     TableName: TABLE_NAME,
     Key: { tournamentId, id: matchId },
-    UpdateExression: "SET homeTeamId = :homeTeamID, awayTeamId = :awayTeamId, # date= :date",
-    ConditionExpression: "attribute_exist(id) AND #status = :scheduled",
+    UpdateExpression: "SET homeTeamId = :homeTeamId, awayTeamId = :awayTeamId, #date = :date",
+    ConditionExpression: "attribute_exists(id) AND #status = :scheduled",
     ExpressionAttributeNames: {"#date": "date", "#status": "status" },
     ExpressionAttributeValues:{
       ":homeTeamId": homeTeamId,
