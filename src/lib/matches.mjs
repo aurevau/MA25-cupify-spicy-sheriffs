@@ -1,4 +1,4 @@
-import { QueryCommand, GetCommand, DeleteCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { QueryCommand, GetCommand, DeleteCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { createError } from "@middy/util";
 import { db } from "./db.mjs";
 import { randomUUID } from "node:crypto";
@@ -57,6 +57,36 @@ export const deleteMatchById = async (tournamentId, matchId) => {
   } catch (error) {
     console.error("ERROR:", error);
     throw createError(500, "Could not delete match");
+  }
+};
+
+export const updateMatch = async (tournamentId, matchId, { homeTeamId, awayTeamId, date }) => {
+  const command = new UpdateCommand({
+    TableName: TABLE_NAME,
+    Key: { tournamentId, id: matchId },
+    UpdateExpression: "SET homeTeamId = :homeTeamId, awayTeamId = :awayTeamId, #date = :date",
+    ConditionExpression: "attribute_exists(id) AND #status = :scheduled",
+    ExpressionAttributeNames: {"#date": "date", "#status": "status" },
+    ExpressionAttributeValues:{
+      ":homeTeamId": homeTeamId,
+      ":awayTeamId": awayTeamId,
+      ":date": date,
+      ":scheduled": "scheduled",
+    },
+    ReturnValues: "ALL_NEW",
+    ReturnValuesOnConditionCheckFailure: "ALL_OLD",
+  });
+  
+  try {
+    const { Attributes } = await db.send(command);
+    return Attributes;
+  } catch (error){
+    if (error.name ==="ConditionalCheckFailedException"){
+      if (!error.Item) throw httpError(404, "Match not found");
+      throw httpError(409, "Only scheduled matches can be updated")
+    }
+    console.error("ERROR:", error);
+    throw createError(500, "Could not update match");
   }
 };
 

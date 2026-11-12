@@ -140,7 +140,14 @@ functions:
       - httpApi:
           path: /tournaments/{id}/matches
           method: POST
-
+          
+  updateMatch:
+    handler: src/functions/matches/updateMatch.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches/{matchId}
+          method: PUT      
+          
   getTeam:
     handler: src/functions/teams/getTeam.handler
     events:
