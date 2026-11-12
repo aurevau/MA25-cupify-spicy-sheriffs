@@ -127,13 +127,20 @@ functions:
           path: /tournaments/{id}/matches/{matchId}
           method: DELETE
 
+  deleteTeam:
+    handler: src/functions/teams/deleteTeam.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams/{teamId}
+          method: DELETE
+
   createMatch:
     handler: src/functions/matches/createMatch.handler
     events:
       - httpApi:
           path: /tournaments/{id}/matches
           method: POST
-          
+
   getTeam:
     handler: src/functions/teams/getTeam.handler
     events:
