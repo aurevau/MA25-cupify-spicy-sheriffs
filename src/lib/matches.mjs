@@ -2,6 +2,7 @@ import { QueryCommand, GetCommand, DeleteCommand, PutCommand } from "@aws-sdk/li
 import { createError } from "@middy/util";
 import { db } from "./db.mjs";
 import { randomUUID } from "node:crypto";
+import { httpError } from "./errors.mjs";
 
 const TABLE_NAME = process.env.MATCHES_TABLE || "matches";
 
@@ -59,7 +60,7 @@ export const deleteMatchById = async (tournamentId, matchId) => {
   }
 };
 
-export const crateMatch = async (tournamentId, { homeTeamId, awayTeamId, date }) => {
+export const createMatch = async (tournamentId, { homeTeamId, awayTeamId, date }) => {
   let teams;
   try {
     teams = await Promise.all(
@@ -73,6 +74,10 @@ export const crateMatch = async (tournamentId, { homeTeamId, awayTeamId, date })
   } catch (error) {
     console.error("ERROR:", error);
     throw createError(500, "Could not verify teams");
+  }
+
+  if (teams.some(({ Item }) => !Item)) {
+    throw httpError(404, "Team not found in tournament");
   }
 
   const match = {
