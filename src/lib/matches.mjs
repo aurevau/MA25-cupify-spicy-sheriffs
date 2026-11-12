@@ -1,4 +1,4 @@
-import { QueryCommand, GetCommand, DeleteCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { QueryCommand, GetCommand, DeleteCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { createError } from "@middy/util";
 import { db } from "./db.mjs";
 import { randomUUID } from "node:crypto";
@@ -58,6 +58,21 @@ export const deleteMatchById = async (tournamentId, matchId) => {
     console.error("ERROR:", error);
     throw createError(500, "Could not delete match");
   }
+};
+
+export const updateMatch = async(tournamentId, matchId, { homeTeamId, awayTeamId, date }) => {
+  const command = new UpdateCommand({
+    TableName: TABLE_NAME,
+    Key: { tournamentId, id: matchId },
+    ExpressionAttributeNames: {"#date": "date", "#status": "status" },
+    ExpressionAttributeValues:{
+      ":homeTeamId": homeTeamId,
+      ":awayTeamId": awayTeamId,
+      ":date": date,
+      ":scheduled": "scheduled",
+    },
+  })
+  
 };
 
 export const createMatch = async (tournamentId, { homeTeamId, awayTeamId, date }) => {
