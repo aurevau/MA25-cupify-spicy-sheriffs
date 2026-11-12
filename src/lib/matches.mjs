@@ -60,10 +60,12 @@ export const deleteMatchById = async (tournamentId, matchId) => {
   }
 };
 
-export const updateMatch = async(tournamentId, matchId, { homeTeamId, awayTeamId, date }) => {
+export const updateMatch = async (tournamentId, matchId, { homeTeamId, awayTeamId, date }) => {
   const command = new UpdateCommand({
     TableName: TABLE_NAME,
     Key: { tournamentId, id: matchId },
+    UpdateExression: "SET homeTeamId = :homeTeamID, awayTeamId = :awayTeamId, # date= :date",
+    ConditionExpression: "attribute_exist(id) AND #status = :scheduled",
     ExpressionAttributeNames: {"#date": "date", "#status": "status" },
     ExpressionAttributeValues:{
       ":homeTeamId": homeTeamId,
@@ -71,8 +73,21 @@ export const updateMatch = async(tournamentId, matchId, { homeTeamId, awayTeamId
       ":date": date,
       ":scheduled": "scheduled",
     },
-  })
+    ReturnValues: "ALL_NEW",
+    ReturnValuesOnConditionCheckFailure: "ALL_OLD",
+  });
   
+  try {
+    const { Attributes } = await db.send(command);
+    return Attributes;
+  } catch (error){
+    if (error.name ==="ConditionalCheckFailedException"){
+      if (!error.Item) throw httpError(404, "Match not found");
+      throw httpError(409, "Only scheduled matches can be updated")
+    }
+    console.error("ERROR:", error);
+    throw createError(500, "Could not update match");
+  }
 };
 
 export const createMatch = async (tournamentId, { homeTeamId, awayTeamId, date }) => {
