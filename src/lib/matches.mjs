@@ -90,6 +90,35 @@ export const updateMatch = async (tournamentId, matchId, { homeTeamId, awayTeamI
   }
 };
 
+export const reportResult = async (tournamentId, matchId, { homeScore, awayScore }) => {
+  const command = new UpdateCommand({
+    TableName: TABLE_NAME,
+    Key: { tournamentId, id: matchId },
+    UpdateExpression: "SET homeScore = :homeScore, awayScore = :awayScore, #status = :completed",
+    ConditionExpression: "attribute_exists(id) AND #status = :scheduled",
+    ExpressionAttributeNames: { "#status": "status" },
+    ExpressionAttributeValues:{
+      ":homeScore": homeScore,
+      ":awayScore": awayScore,
+      ":completed": "completed",
+      ":scheduled": "scheduled",
+    },
+    ReturnValues: "ALL_NEW",
+    ReturnValuesOnConditionCheckFailure: "ALL_OLD",
+  });
+  try {
+    const { Attributes } = await db.send(command);
+    return Attributes;
+  } catch (error){
+    if (error.name ==="ConditionalCheckFailedException"){
+      if (!error.Item) throw httpError(404, "Match not found");
+      throw httpError(409, "Only scheduled matches can have results registered")
+    }
+    console.error("ERROR:", error);
+    throw createError(500, "Could not report match results");
+  }
+};
+
 export const createMatch = async (tournamentId, { homeTeamId, awayTeamId, date }) => {
   let teams;
   try {
