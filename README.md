@@ -1,5 +1,5 @@
 
-# Cupify Spicy Sherrifs
+# Cupify Spicy Sheriffs
 
 MA25 Group Assignment Cupify, a REST API for tournaments, teams and matches. Built with Node.js, AWS Lambda, API Gateway, DynamoDB and the Serverless Framework. 
 
@@ -38,17 +38,18 @@ serverless deploy
 - GET /tournaments/{id}/matches/{matchId}
 - DELETE /tournaments/{id}/matches/{matchId}
 
-## Pending:
 - GET /tournaments/{id}/teams
 - GET /tournaments/{id}/teams/{teamId}
 - POST /tournaments/{id}/teams
 - PUT /tournaments/{id}/teams/{teamId}
 - DELETE /tournaments/{id}/teams/{teamId}
 
+- GET /tournaments/{id}/standings
+
 
 POST tournaments/{id}/matches
 PUT /tournaments/{id}/matches/{matchId}
 PATCH /tournaments/{id}/matches/{matchId}/result
 
-Aurelie Vaudan, Mikeal Engvall, Ibrahim Jasim Alsalih, Robin Henriksson och Ahmad Alhayel
+Aurelie Vaudan, Mikael Engvall, Ibrahim Jasim Alsalih, Robin Henriksson och Ahmad Alhayel
 
