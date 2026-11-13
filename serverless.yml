@@ -147,6 +147,13 @@ functions:
       - httpApi:
           path: /tournaments/{id}/matches/{matchId}
           method: PUT      
+  
+  reportResult:
+    handler: src/functions/matches/reportResult.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches/{matchId}/result
+          method: PATCH
           
   getTeam:
     handler: src/functions/teams/getTeam.handler
