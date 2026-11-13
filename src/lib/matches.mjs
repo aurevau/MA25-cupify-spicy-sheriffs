@@ -112,10 +112,10 @@ export const reportResult = async (tournamentId, matchId, { homeScore, awayScore
   } catch (error){
     if (error.name ==="ConditionalCheckFailedException"){
       if (!error.Item) throw httpError(404, "Match not found");
-      throw httpError(409, "Only scheduled matches can be updated")
+      throw httpError(409, "Only scheduled matches can have results registered")
     }
     console.error("ERROR:", error);
-    throw createError(500, "Could not update match");
+    throw createError(500, "Could not report match results");
   }
 };
 
