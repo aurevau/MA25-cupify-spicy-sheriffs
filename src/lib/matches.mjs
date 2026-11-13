@@ -106,6 +106,17 @@ export const reportResult = async (tournamentId, matchId, { homeScore, awayScore
     ReturnValues: "ALL_NEW",
     ReturnValuesOnConditionCheckFailure: "ALL_OLD",
   });
+  try {
+    const { Attributes } = await db.send(command);
+    return Attributes;
+  } catch (error){
+    if (error.name ==="ConditionalCheckFailedException"){
+      if (!error.Item) throw httpError(404, "Match not found");
+      throw httpError(409, "Only scheduled matches can be updated")
+    }
+    console.error("ERROR:", error);
+    throw createError(500, "Could not update match");
+  }
 };
 
 export const createMatch = async (tournamentId, { homeTeamId, awayTeamId, date }) => {
