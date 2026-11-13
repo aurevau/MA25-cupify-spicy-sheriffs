@@ -177,3 +177,10 @@ functions:
       - httpApi:
           path: /tournaments/{id}/teams/{teamId}
           method: PUT
+
+  getStandings:
+    handler: src/functions/tournaments/getStandings.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/standings
+          method: GET
