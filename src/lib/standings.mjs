@@ -1,4 +1,4 @@
-//Create empty table row for team
+// Create empty table row for team
 const createRow = (team) => ({
     teamId: team.id,
     teamName: team.name,
@@ -12,8 +12,8 @@ const createRow = (team) => ({
     points: 0
 });
 
-//Add one match result to a teams row, seen from that team's side
-const addResult = (row,scored,conceded) => {
+// Add one match result to a teams row, seen from that team's side
+const addResult = (row, scored, conceded) => {
     row.played += 1;
     row.goalsFor += scored;
     row.goalsAgainst += conceded;
@@ -30,7 +30,7 @@ const addResult = (row,scored,conceded) => {
     }
 };
 
-//Calculate stands from a tournament team and match
+// Calculate standings from a tournament's teams and matches
 export const calculateStandings = (teams, matches) => {
     const table = new Map(teams.map((team) => [team.id, createRow(team)]));
 
