@@ -3,13 +3,19 @@
 
 MA25 Group Assignment Cupify, a REST API for tournaments, teams and matches. Built with Node.js, AWS Lambda, API Gateway, DynamoDB and the Serverless Framework. 
 
+## API URL
+`https://rieshb2h0k.execute-api.eu-north-1.amazonaws.com`
+
 ## Installation
 
-```bash 
+```bash
 git clone <repo-url>
 cd MA25-cupify-spicy-sheriffs
 npm install
+npm install -g serverless
 cp .env.example .env
+aws configure
+serverless login
 ```
 
 Open `.env` and fill in: 
@@ -21,13 +27,7 @@ Open `.env` and fill in:
 serverless deploy
 ```
 
-## API URL
-`https://rieshb2h0k.execute-api.eu-north-1.amazonaws.com`
-
 ## Endpoints 
-
-
-## Implemented: 
 - GET /tournaments
 - GET /tournaments/{id}
 - POST /tournaments
@@ -37,6 +37,9 @@ serverless deploy
 - GET /tournaments/{id}/matches
 - GET /tournaments/{id}/matches/{matchId}
 - DELETE /tournaments/{id}/matches/{matchId}
+- POST /tournaments/{id}/matches
+- PUT /tournaments/{id}/matches/{matchId}
+- PATCH /tournaments/{id}/matches/{matchId}/result
 
 - GET /tournaments/{id}/teams
 - GET /tournaments/{id}/teams/{teamId}
@@ -46,10 +49,6 @@ serverless deploy
 
 - GET /tournaments/{id}/standings
 
-
-POST tournaments/{id}/matches
-PUT /tournaments/{id}/matches/{matchId}
-PATCH /tournaments/{id}/matches/{matchId}/result
-
+## Team
 Aurelie Vaudan, Mikael Engvall, Ibrahim Jasim Alsalih, Robin Henriksson och Ahmad Alhayel
 
