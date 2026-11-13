@@ -90,6 +90,24 @@ export const updateMatch = async (tournamentId, matchId, { homeTeamId, awayTeamI
   }
 };
 
+export const reportResult = async (tournamentId, matchId, { homeScore, awayScore }) => {
+  const command = new UpdateCommand({
+    TableName: TABLE_NAME,
+    Key: { tournamentId, id: matchId },
+    UpdateExpression: "SET homeScore = :homeScore, awayScore = :awaySore, #status = :completed",
+    ConditionExpression: "attribute_exists(id) AND #status = :scheduled",
+    ExpressionAttributeNames: { "#status": "status" },
+    ExpressionAttributeValues:{
+      ":homeScore": homeScore,
+      ":awayScore": awayScore,
+      ":completed": "completed",
+      ":scheduled": "scheduled",
+    },
+    ReturnValues: "ALL_NEW",
+    ReturnValuesOnConditionCheckFailure: "ALL_OLD",
+  });
+};
+
 export const createMatch = async (tournamentId, { homeTeamId, awayTeamId, date }) => {
   let teams;
   try {
