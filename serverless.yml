@@ -1,20 +1,186 @@
-# "org" ensures this Service is used with the correct Serverless Framework Access Key.
-org: aurelievaudan
-# "service" is the name of this project. This will also be added to your AWS resource names.
+useDotenv: true
+
+org: ${env:AWS_ORG}
 service: MA25-cupify-spicy-sheriffs
 
 provider:
   name: aws
   runtime: nodejs24.x
   architecture: arm64
-  # Uncomment to easily set up a custom domain. Read the docs for more details:
-  # https://www.serverless.com/framework/docs/providers/aws/guide/domains
-  # domain: api.example.com
+  region: eu-north-1
+  iam:
+    role: ${env:AWS_ROLE}
+  environment:
+    TOURNAMENTS_TABLE: tournaments
+    TEAMS_TABLE: teams
+    MATCHES_TABLE: matches
+
+resources:
+  Resources:
+    TournamentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: tournaments
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: entity
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: entity
+            KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE
+    TeamsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: teams
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: tournamentId
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tournamentId
+            KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE
+    MatchesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: matches
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: tournamentId
+            AttributeType: S
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tournamentId
+            KeyType: HASH
+          - AttributeName: id
+            KeyType: RANGE
 
 functions:
-  hello:
-    handler: handler.hello
+  getTournaments:
+    handler: src/functions/tournaments/getTournaments.handler
     events:
       - httpApi:
-          path: /
-          method: get
+          path: /tournaments
+          method: GET
+
+  getTournament:
+    handler: src/functions/tournaments/getTournament.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}
+          method: GET
+
+  createTournament:
+    handler: src/functions/tournaments/createTournament.handler
+    events:
+      - httpApi:
+          path: /tournaments
+          method: POST
+
+  updateTournamentStatus:
+    handler: src/functions/tournaments/updateTournamentStatus.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/status
+          method: PATCH
+
+  deleteTournament:
+    handler: src/functions/tournaments/deleteTournament.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}
+          method: DELETE
+
+  getMatches:
+    handler: src/functions/matches/getMatches.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches
+          method: GET
+
+  createTeam:
+    handler: src/functions/teams/createTeam.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams
+          method: POST
+
+  getMatch:
+    handler: src/functions/matches/getMatch.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches/{matchId}
+          method: GET
+
+  deleteMatch:
+    handler: src/functions/matches/deleteMatch.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches/{matchId}
+          method: DELETE
+
+  deleteTeam:
+    handler: src/functions/teams/deleteTeam.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams/{teamId}
+          method: DELETE
+
+  createMatch:
+    handler: src/functions/matches/createMatch.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches
+          method: POST
+          
+  updateMatch:
+    handler: src/functions/matches/updateMatch.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches/{matchId}
+          method: PUT      
+  
+  reportResult:
+    handler: src/functions/matches/reportResult.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/matches/{matchId}/result
+          method: PATCH
+          
+  getTeam:
+    handler: src/functions/teams/getTeam.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams/{teamId}
+          method: GET
+
+
+  getTeams:
+    handler: src/functions/teams/getTeams.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams
+          method: GET
+
+
+  updateTeam:
+    handler: src/functions/teams/updateTeam.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/teams/{teamId}
+          method: PUT
+
+  getStandings:
+    handler: src/functions/tournaments/getStandings.handler
+    events:
+      - httpApi:
+          path: /tournaments/{id}/standings
+          method: GET
